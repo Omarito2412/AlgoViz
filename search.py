@@ -19,12 +19,14 @@ class Game:
         self.goal = bone_pos
         self.init = doge_pos
         self.iterations = 0      # Emergency break from the algorithm
-        solution = self.Search(algorithm="bfs", precision=5)
+        self.solution = self.Search(algorithm="bfs", precision=5)
 
-        self.paintPath(solution)
+        self.paintPath()
 
         doge = PhotoImage(file = 'doge.gif')    # Create PhotoImage from gif file
-        self.canvas.create_image(doge_pos[0], doge_pos[1], image=doge)    # Add the image to canvas
+        self.doge = self.canvas.create_image(doge_pos[0], doge_pos[1], image=doge)    # Add the image to canvas
+
+        self.dogeMove()
 
         root.mainloop()
     """ 
@@ -91,8 +93,25 @@ class Game:
         lets paint the path for doge to 
         reach the bone.
     """
-    def paintPath(self, solution):
-        for node in solution:
+    def paintPath(self):
+        for node in self.solution:
             self.canvas.create_oval(node[0], node[1], node[0]+4, node[1]+4, outline="green", fill="green")
+
+    """
+        Move doge to the bone
+    """
+    def dogeMove(self):
+        self.nextStep = 0
+        self.canvas.after(50, self.step)
+
+    """
+        Move one step towards the bone
+    """
+    def step(self):
+        node = self.solution[self.nextStep]
+        self.canvas.coords(self.doge, node[0], node[1])
+        if (self.nextStep + 1 < len(self.solution)):
+            self.nextStep += 1
+            self.canvas.after(50, self.step)
 
 game = Game(600, 400, '#4C88A0', bone_pos=(340, 200), doge_pos=(540, 330))
