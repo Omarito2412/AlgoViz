@@ -114,4 +114,4 @@ class Game:
             self.nextStep += 1
             self.canvas.after(50, self.step)
 
-game = Game(600, 400, '#4C88A0', bone_pos=(340, 200), doge_pos=(540, 330))
+game = Game(600, 400, '#4C88A0', bone_pos=(340, 50), doge_pos=(540, 330))
