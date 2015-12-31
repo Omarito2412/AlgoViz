@@ -1,6 +1,7 @@
 from Tkinter import *
+import argparse
 class Game:
-    def __init__(self,width, height, color='#000000', bone_pos=(520, 250), doge_pos=(90, 200)):
+    def __init__(self,width, height, color='#000000', bone_pos=(520, 250), doge_pos=(90, 200), algorithm='bfs', precision=5):
         root = Tk()     # Initialize the GUI window
         root.geometry(str(width)+"x"+str(height))    # Set the window size
         root.minsize(width=300, height=300) # Minimum window size
@@ -19,7 +20,7 @@ class Game:
         self.goal = bone_pos
         self.init = doge_pos
         self.iterations = 0      # Emergency break from the algorithm
-        self.solution = self.Search(algorithm="bfs", precision=5)
+        self.solution = self.Search(algorithm=algorithm, precision=precision)
 
         self.paintPath()
 
@@ -101,17 +102,21 @@ class Game:
         Move doge to the bone
     """
     def dogeMove(self):
-        self.nextStep = 0
-        self.canvas.after(50, self.step)
+        self.nextStep = 0   # Initialize
+        self.canvas.after(50, self.step)    # Execute
 
     """
         Move one step towards the bone
     """
     def step(self):
-        node = self.solution[self.nextStep]
-        self.canvas.coords(self.doge, node[0], node[1])
-        if (self.nextStep + 1 < len(self.solution)):
+        node = self.solution[self.nextStep] # Next node
+        self.canvas.coords(self.doge, node[0], node[1]) # Change doge coordinates
+        if (self.nextStep + 1 < len(self.solution)):    # Are we there yet?
             self.nextStep += 1
             self.canvas.after(50, self.step)
 
-game = Game(600, 400, '#4C88A0', bone_pos=(340, 50), doge_pos=(540, 330))
+parser = argparse.ArgumentParser(description='Visualize some search algorithm, watch Doge find his bone!')
+parser.add_argument('-a', '--algorithm', dest='algorithm', default='bfs',
+                   help='Search algorithm to apply: (bfs, dfs)')
+algorithm = parser.parse_args().algorithm
+game = Game(600, 400, '#4C88A0', bone_pos=(340, 50), doge_pos=(540, 330), algorithm=algorithm)
